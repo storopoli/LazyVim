@@ -14,11 +14,50 @@ return {
 
   {
     "mrcjkb/haskell-tools.nvim",
-    version = "^3",
+    version = "^6",
     ft = { "haskell", "lhaskell", "cabal", "cabalproject" },
     dependencies = {
       { "nvim-telescope/telescope.nvim", optional = true },
     },
+    keys = {
+      {
+        "<leader>ce",
+        ft = "haskell",
+        "<cmd>HlsEvalAll<cr>",
+        desc = "Haskell Evaluate All",
+      },
+      {
+        "<leader>so",
+        ft = "haskell",
+        function()
+          require("haskell-tools").hoogle.hoogle_signature()
+        end,
+        desc = "Hoogle (Function Signature)",
+      },
+      {
+        "<leader>sO",
+        ft = "haskell",
+        "<cmd>Telescope hoogle<cr>",
+        desc = "Hoogle (Global)",
+      },
+      {
+        "<leader>fl",
+        ft = "haskell",
+        function()
+          require("haskell-tools").repl.toggle()
+        end,
+        desc = "GHCi REPL (Package)",
+      },
+      {
+        "<leader>fL",
+        ft = "haskell",
+        function()
+          require("haskell-tools").repl.toggle(vim.api.nvim_buf_get_name(0))
+        end,
+        desc = "GHCi REPL (Current File)",
+      },
+    },
+  },
     config = function()
       local ok, telescope = pcall(require, "telescope")
       if ok then
@@ -78,6 +117,16 @@ return {
         telescope.load_extension("hoogle")
       end
     end,
+  },
+
+  {
+    "stevearc/conform.nvim",
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        haskell = { "ormolu" },
+      },
+    },
   },
 
   -- Make sure lspconfig doesn't start hls,
